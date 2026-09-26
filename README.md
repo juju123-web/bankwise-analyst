@@ -4,10 +4,10 @@
 
 项目提供两个明确区分的模式：
 
-在线 Demo：[bankwise-juju123.streamlit.app](https://bankwise-juju123.streamlit.app/)。源码仓库：[juju123-web/bankwise-analyst](https://github.com/juju123-web/bankwise-analyst)。已验证线上预设分析；模型自由提问等待 API Key 配置与实测。
+在线 Demo：[bankwise-juju123.streamlit.app](https://bankwise-juju123.streamlit.app/)。源码仓库：[juju123-web/bankwise-analyst](https://github.com/juju123-web/bankwise-analyst)。已验证线上预设分析及两个真实模型案例：渠道统计、收入/ROI 拒答。详见 [线上验证记录](reports/LIVE_SMOKE_TEST.md)。完整模型基准尚未执行。
 
 - **预设演示**：15 个固定问题，直接执行经过验证的 SQL；无需密钥。这不是自然语言模型。
-- **模型自由提问**：通过 OpenAI Responses API 生成 SQL，校验并执行，失败后最多修复一次。需要自己的 API Key 和模型 ID；当前交付未进行真实付费 API 测试。
+- **模型自由提问**：通过 OpenAI Responses API 生成 SQL，校验并执行，失败后最多修复一次。线上已配置服务端密钥并通过两个真实 API 冒烟案例；使用该密钥需要访问口令。
 
 ## 5 分钟启动
 
@@ -75,7 +75,7 @@ Live 评测是 15 个固定问题的严格结果比对；为了可自动核对�
 
 - 已实现：真实数据 ETL、本地网页、11 类 SQL 查询、4 类明确拒答、图表、SQL 工作台、JSON/CSV 导出、区间统计、测试、评测、中文学习指南、面试材料。
 - 已完成 GitHub 源码发布、GitHub Actions 验证与 Streamlit 网站上线；线上总体分析查询已核对。
-- 尚未完成真实模型评测，需要配置 API Key；Dockerfile 已提供但未运行验证。
+- 已完成两个真实模型冒烟案例，完整 live benchmark 尚未执行；Dockerfile 已提供但未运行验证。
 - 不属于本版：生产权限系统、多租户、实时银行数据、PostgreSQL、金融风控或自动营销决策。
 
 这是单用户、可运行的求职学习项目。为易读和可验证使用 SQLite 与有限状态流程，不为了堆技术引入不必要的 Agent 框架。架构与权衡见 [ARCHITECTURE](docs/ARCHITECTURE.md)。
