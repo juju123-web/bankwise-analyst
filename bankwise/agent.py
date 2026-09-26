@@ -85,9 +85,30 @@ def analyze(question, planner=None, demo_id=None, db=DB):
                 break
         except Exception as exc:
             # Credentials or provider response bodies are never shown in the UI/log.
-            trace.append({'step': 'provider_error', 'type': type(exc).__name__})
-            return finish('error', '模型请求失败，请检查密钥、模型权限、额度或网络；没有自动切换成演示答案。')
+            diagnostic, explanation = provider_error(exc)
+            trace.append({'step': 'provider_error', **diagnostic})
+            return finish('error', explanation)
     return finish('error', '两次尝试后仍未得到可执行查询。请重新表述问题或检查执行轨迹。')
+
+def provider_error(exc):
+    # Only known enum values are exposed; never print exception bodies or keys.
+    messages = {
+        'insufficient_quota': 'OpenAI 返回额度不足（insufficient_quota）。请核对充值账户/组织是否与此 API Key 所属项目一致，以及该组织的余额与用量限制；不要盲目重复充值。',
+        'rate_limit_exceeded': 'OpenAI 返回请求或 token 速率限制。请稍后重试，并检查模型的项目速率额度。',
+        'slow_down': 'OpenAI 要求降低请求速率，请稍后重试。',
+        'invalid_api_key': 'OpenAI 拒绝此 API Key，请在 Secrets 中更新有效密钥。',
+        'model_not_found': '当前模型不存在或此项目无访问权限，请检查 OPENAI_MODEL。',
+    }
+    diagnostic = {'type': type(exc).__name__}
+    status = getattr(exc, 'status_code', None)
+    if isinstance(status, int):
+        diagnostic['http_status'] = status
+    for field in ('code', 'type'):
+        value = getattr(exc, field, None)
+        if isinstance(value, str) and value in messages:
+            diagnostic['code'] = value
+            return diagnostic, messages[value]
+    return diagnostic, '模型请求失败，请检查密钥、模型权限、额度或网络；没有自动切换成演示答案。'
 
 WARNINGS = [
     '转化率描述相关性，不能证明渠道或营销次数造成转化变化。',
