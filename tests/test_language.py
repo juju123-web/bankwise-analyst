@@ -31,7 +31,8 @@ def test_english_page_and_language_switch():
     app.button[0].click().run()
     assert app.session_state['analysis']['language']=='en'
     assert 'Overall:' in app.session_state['analysis']['summary']
-    assert any('English study guide' in str(x) for x in app.get('download_button'))
+    assert any('STUDY_GUIDE_EN.md' in x.value for x in app.caption)
+    assert [tab.label for tab in app.tabs] == ['Business analysis', 'Data and definitions']
     app.selectbox(key='language').select('zh').run()
     assert not app.exception
     assert app.metric[0].label=='营销观察记录'

@@ -61,7 +61,7 @@ c1.metric(t('营销观察记录'), f'{overall[0]:,}')
 c2.metric(t('定期存款订阅记录'), f'{overall[1]:,}')
 c3.metric(t('观察记录转化率'), f'{overall[2]:.2f}%')
 st.caption(t('统计口径：订阅记录数 ÷ 全部观察记录数；不是独立客户转化率。'))
-analysis_tab, sql_tab, data_tab, learn_tab = st.tabs([t('业务分析'), t('SQL 工作台'), t('数据与口径'), t('学习入口')])
+analysis_tab, data_tab = st.tabs([t('业务分析'), t('数据与口径')])
 
 def display(result, prefix):
     st.caption(t('模型查询') if result['mode'] == 'live' else t('预设 SQL 演示 · 未调用模型'))
@@ -128,8 +128,7 @@ with analysis_tab:
     if 'analysis' in st.session_state and st.session_state['analysis']['mode'] == expected_mode and st.session_state['analysis'].get('language', 'zh') == language:
         st.caption(t('本次问题：') + st.session_state['analysis']['question'])
         display(st.session_state['analysis'], 'analysis')
-with sql_tab:
-    st.subheader(t('动手核对 SQL'))
+with data_tab, st.expander(t('SQL 工作台')):
     st.caption(t('单条只读 SELECT · 最多返回 200 行 · 限制执行资源'))
     sql = st.text_area('SQL', CATALOG['channel']['sql'], height=170)
     if st.button(t('执行 SQL')):
@@ -148,7 +147,7 @@ with sql_tab:
         if table['truncated']:
             st.warning(t('结果已截断至 200 行。'))
 with data_tab:
-    st.subheader(t('先理解一行数据代表什么'))
+    st.subheader(t('数据与口径'))
     st.write(t('一行是源数据中的一条营销观察记录。系统生成 observation_id 方便定位，不代表真实客户编号。'))
     st.markdown((ROOT / 'docs' / ('DATA_CARD_EN.md' if language == 'en' else 'DATA_CARD.md')).read_text(encoding='utf-8'))
     with st.expander(t('数据库字段')):
@@ -157,10 +156,9 @@ with data_tab:
     if manifest.exists():
         with st.expander(t('数据来源和 SHA-256')):
             st.json(json.loads(manifest.read_text(encoding='utf-8')))
-with learn_tab:
-    st.subheader(t('先会用，再读懂，最后独立修改'))
-    st.write(t('从 docs/STUDY_GUIDE.md 开始。每一节都有对应文件、练习和通过标准。'))
-    st.markdown(t('1. 跑三个分析，解释样本量与转化率。\n2. 在 SQL 工作台重写一个分组查询。\n3. 跟踪 agent.py 的状态流转。\n4. 理解只读保护为何不能只靠提示词。\n5. 完成独立练习，再准备面试。'))
-    guide = ROOT / 'docs' / ('STUDY_GUIDE_EN.md' if language == 'en' else 'STUDY_GUIDE.md')
-    if guide.exists():
-        st.download_button(t('下载中文学习指南'), guide.read_text(encoding='utf-8'), ('STUDY_GUIDE_EN.md' if language == 'en' else 'STUDY_GUIDE.md'))
+st.divider()
+repository = 'https://github.com/juju123-web/bankwise-analyst'
+guide_name = 'STUDY_GUIDE_EN.md' if language == 'en' else 'STUDY_GUIDE.md'
+guide_label = 'Study guide' if language == 'en' else '学习指南'
+source_label = 'Source code' if language == 'en' else '项目源码'
+st.caption(f'[{source_label}]({repository}) · [{guide_label}]({repository}/blob/main/docs/{guide_name})')
