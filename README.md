@@ -4,6 +4,8 @@
 
 项目提供两个明确区分的模式：
 
+源码仓库：[juju123-web/bankwise-analyst](https://github.com/juju123-web/bankwise-analyst)。当前已推送源码；Streamlit 上线等待账户登录完成。
+
 - **预设演示**：15 个固定问题，直接执行经过验证的 SQL；无需密钥。这不是自然语言模型。
 - **模型自由提问**：通过 OpenAI Responses API 生成 SQL，校验并执行，失败后最多修复一次。需要自己的 API Key 和模型 ID；当前交付未进行真实付费 API 测试。
 
@@ -45,7 +47,7 @@ python -m bankwise.evaluate
 
 ## 启用模型
 
-侧栏选择“模型自由提问”，输入密钥和账户可用的模型 ID；密钥仅在会话内使用。也可设置 `OPENAI_API_KEY`、`OPENAI_MODEL` 环境变量。不要把密钥提交到 GitHub。实现使用 [OpenAI Responses API 官方说明](https://developers.openai.com/api/docs/quickstart)。
+未配置服务端密钥时，侧栏选择“模型自由提问”，输入个人密钥和账户可用的模型 ID；密钥仅在会话内使用。云端可通过 Secrets 设置 `OPENAI_API_KEY`、`OPENAI_MODEL`，此时还必须设置 `BANKWISE_ACCESS_CODE`，访问者需输入口令；默认每日最多 30 个问题，跨会话共享当前实例的额度。配置与计数持久性边界见部署文档。不要把密钥提交到 GitHub。实现使用 [OpenAI Responses API 官方说明](https://developers.openai.com/api/docs/quickstart)。
 
 每个问题最多两次请求，每次最多 1,600 个输出 token、40 秒请求超时。结果摘要由本地程序基于实际返回值生成，数据库行不发送给模型。schema、问题以及失败 SQL/错误可能发送给服务；`store=False`。Token usage 随结果记录，不虚构费用。
 
@@ -73,7 +75,7 @@ Live 评测是 15 个固定问题的严格结果比对；为了可自动核对�
 
 - 已实现：真实数据 ETL、本地网页、11 类 SQL 查询、4 类明确拒答、图表、SQL 工作台、JSON/CSV 导出、区间统计、测试、评测、中文学习指南、面试材料。
 - 已提供但未外部验证：模型 API 接入、GitHub Actions 配置、Dockerfile、公开部署步骤。
-- 尚未完成：真实模型评测、GitHub 远程发布、公开网站发布；需要后续密钥和托管账户。不能把本地网址写成公共 Demo。
+- 已完成 GitHub 源码发布；尚未完成真实模型评测和公开网站发布，需要后续密钥与 Streamlit 登录。不能把本地网址写成公共 Demo。
 - 不属于本版：生产权限系统、多租户、实时银行数据、PostgreSQL、金融风控或自动营销决策。
 
 这是单用户、可运行的求职学习项目。为易读和可验证使用 SQLite 与有限状态流程，不为了堆技术引入不必要的 Agent 框架。架构与权衡见 [ARCHITECTURE](docs/ARCHITECTURE.md)。

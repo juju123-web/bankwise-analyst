@@ -1,6 +1,6 @@
 # 发布与复现
 
-当前选定部署目标：Streamlit Community Cloud。尚未创建远程 GitHub 仓库或公开网址，等待用户完成平台登录。以下配置已实现，但不代表云端已验证。
+当前选定部署目标：Streamlit Community Cloud。源码已发布到 https://github.com/juju123-web/bankwise-analyst ，分支 main、入口 app.py。公开网址尚未生成，等待用户完成 Streamlit 登录。以下配置已实现，但不代表网站已上线。
 
 ## 已准备的云端配置（2026-09-26）
 
