@@ -1,6 +1,6 @@
 # 发布与复现
 
-当前选定部署目标：Streamlit Community Cloud。源码已发布到 https://github.com/juju123-web/bankwise-analyst ，分支 main、入口 app.py。公开网址尚未生成，等待用户完成 Streamlit 登录。以下配置已实现，但不代表网站已上线。
+已部署到 Streamlit Community Cloud：https://bankwise-juju123.streamlit.app/ 。源码：https://github.com/juju123-web/bankwise-analyst ，分支 main、入口 app.py、Python 3.12。线上已核对总体查询：41,188 条观察、4,640 条订阅、11.2654% 转化率。模型自由提问仍等待 API Key 配置与真实调用验证。
 
 ## 已准备的云端配置（2026-09-26）
 

@@ -4,7 +4,7 @@
 
 项目提供两个明确区分的模式：
 
-源码仓库：[juju123-web/bankwise-analyst](https://github.com/juju123-web/bankwise-analyst)。当前已推送源码；Streamlit 上线等待账户登录完成。
+在线 Demo：[bankwise-juju123.streamlit.app](https://bankwise-juju123.streamlit.app/)。源码仓库：[juju123-web/bankwise-analyst](https://github.com/juju123-web/bankwise-analyst)。已验证线上预设分析；模型自由提问等待 API Key 配置与实测。
 
 - **预设演示**：15 个固定问题，直接执行经过验证的 SQL；无需密钥。这不是自然语言模型。
 - **模型自由提问**：通过 OpenAI Responses API 生成 SQL，校验并执行，失败后最多修复一次。需要自己的 API Key 和模型 ID；当前交付未进行真实付费 API 测试。
@@ -74,8 +74,8 @@ Live 评测是 15 个固定问题的严格结果比对；为了可自动核对�
 ## 完成标准与交付边界
 
 - 已实现：真实数据 ETL、本地网页、11 类 SQL 查询、4 类明确拒答、图表、SQL 工作台、JSON/CSV 导出、区间统计、测试、评测、中文学习指南、面试材料。
-- 已提供但未外部验证：模型 API 接入、GitHub Actions 配置、Dockerfile、公开部署步骤。
-- 已完成 GitHub 源码发布；尚未完成真实模型评测和公开网站发布，需要后续密钥与 Streamlit 登录。不能把本地网址写成公共 Demo。
+- 已完成 GitHub 源码发布、GitHub Actions 验证与 Streamlit 网站上线；线上总体分析查询已核对。
+- 尚未完成真实模型评测，需要配置 API Key；Dockerfile 已提供但未运行验证。
 - 不属于本版：生产权限系统、多租户、实时银行数据、PostgreSQL、金融风控或自动营销决策。
 
 这是单用户、可运行的求职学习项目。为易读和可验证使用 SQLite 与有限状态流程，不为了堆技术引入不必要的 Agent 框架。架构与权衡见 [ARCHITECTURE](docs/ARCHITECTURE.md)。

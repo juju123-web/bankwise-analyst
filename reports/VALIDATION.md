@@ -1,5 +1,7 @@
 # 验证记录
 
+2026-09-26 上线更新：GitHub Actions 两次运行成功，Streamlit Community Cloud 在 Python 3.12.14 上启动成功；在线地址 https://bankwise-juju123.streamlit.app/ ，页面执行总体分析得到 41,188 / 4,640 / 11.2654%。云平台自动将 pyarrow 25.0.1 替换为 24.0.0。模型 API 尚待密钥配置。
+
 2026-09-26 部署准备更新：增加服务器密钥访问口令、SQLite 原子每日配额与自动初始化，pytest 共 31 项通过。GitHub 源码已推送；Streamlit 登录未完成，真实 API 尚无密钥。
 
 验证日期：2026-09-25。环境：Windows、Python 3.12.14；依赖版本见 requirements.txt。
