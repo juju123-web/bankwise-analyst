@@ -1,0 +1,976 @@
+{
+  "mode": "demo",
+  "timestamp": "2026-09-25T02:00:53.971194+00:00",
+  "scope": "15 fixed catalog questions; CSV oracle; not a general NL-to-SQL accuracy claim",
+  "passed": 15,
+  "total": 15,
+  "median_ms": 15.0,
+  "cases": [
+    {
+      "id": "overall",
+      "question": "整体转化率是多少？",
+      "passed": true,
+      "expected_status": "ok",
+      "result": {
+        "question": "整体转化率是多少？",
+        "mode": "demo",
+        "trace": [
+          {
+            "step": "inspect_schema",
+            "table": "bank_contacts",
+            "columns": 23
+          },
+          {
+            "step": "plan",
+            "attempt": 1,
+            "status": "query"
+          },
+          {
+            "step": "execute",
+            "attempt": 1,
+            "rows": 1
+          }
+        ],
+        "status": "ok",
+        "explanation": "按源数据观察记录计算；不是独立客户口径。",
+        "sql": "SELECT COUNT(*) AS observations, SUM(subscribed) AS subscriptions, ROUND(100.0 * AVG(subscribed), 4) AS conversion_pct FROM bank_contacts",
+        "table": {
+          "columns": [
+            "observations",
+            "subscriptions",
+            "conversion_pct"
+          ],
+          "rows": [
+            [
+              41188,
+              4640,
+              11.2654
+            ]
+          ],
+          "truncated": false,
+          "elapsed_ms": 16.0
+        },
+        "summary": "总体：转化率 11.27%，样本量 41,188。这是描述统计，建议进一步检验客群差异。",
+        "warnings": [
+          "转化率描述相关性，不能证明渠道或营销次数造成转化变化。",
+          "月份跨年份合并，不能解释为连续月度趋势；没有收入、成本或客户唯一标识。",
+          "duration 是通话结束后才知道的变量，不能用于联系前的预测或客群选择。"
+        ],
+        "elapsed_ms": 16.0
+      }
+    },
+    {
+      "id": "channel",
+      "question": "各联系渠道的转化率有什么差异？",
+      "passed": true,
+      "expected_status": "ok",
+      "result": {
+        "question": "各联系渠道的转化率有什么差异？",
+        "mode": "demo",
+        "trace": [
+          {
+            "step": "inspect_schema",
+            "table": "bank_contacts",
+            "columns": 23
+          },
+          {
+            "step": "plan",
+            "attempt": 1,
+            "status": "query"
+          },
+          {
+            "step": "execute",
+            "attempt": 1,
+            "rows": 2
+          }
+        ],
+        "status": "ok",
+        "explanation": "按源数据观察记录计算；不是独立客户口径。",
+        "sql": "SELECT contact, COUNT(*) AS observations, SUM(subscribed) AS subscriptions, ROUND(100.0 * AVG(subscribed), 4) AS conversion_pct FROM bank_contacts GROUP BY contact ORDER BY conversion_pct DESC",
+        "table": {
+          "columns": [
+            "contact",
+            "observations",
+            "subscriptions",
+            "conversion_pct"
+          ],
+          "rows": [
+            [
+              "cellular",
+              26144,
+              3853,
+              14.7376
+            ],
+            [
+              "telephone",
+              15044,
+              787,
+              5.2313
+            ]
+          ],
+          "truncated": false,
+          "elapsed_ms": 15.0
+        },
+        "summary": "已返回结果中最高的分组为 contact=cellular：转化率 14.74%，样本量 26,144。这是描述统计，建议进一步检验客群差异。",
+        "warnings": [
+          "转化率描述相关性，不能证明渠道或营销次数造成转化变化。",
+          "月份跨年份合并，不能解释为连续月度趋势；没有收入、成本或客户唯一标识。",
+          "duration 是通话结束后才知道的变量，不能用于联系前的预测或客群选择。"
+        ],
+        "elapsed_ms": 15.0
+      }
+    },
+    {
+      "id": "job",
+      "question": "哪些职业群体的转化率较高？",
+      "passed": true,
+      "expected_status": "ok",
+      "result": {
+        "question": "哪些职业群体的转化率较高？",
+        "mode": "demo",
+        "trace": [
+          {
+            "step": "inspect_schema",
+            "table": "bank_contacts",
+            "columns": 23
+          },
+          {
+            "step": "plan",
+            "attempt": 1,
+            "status": "query"
+          },
+          {
+            "step": "execute",
+            "attempt": 1,
+            "rows": 12
+          }
+        ],
+        "status": "ok",
+        "explanation": "按源数据观察记录计算；不是独立客户口径。",
+        "sql": "SELECT job, COUNT(*) AS observations, SUM(subscribed) AS subscriptions, ROUND(100.0 * AVG(subscribed), 4) AS conversion_pct FROM bank_contacts GROUP BY job ORDER BY conversion_pct DESC",
+        "table": {
+          "columns": [
+            "job",
+            "observations",
+            "subscriptions",
+            "conversion_pct"
+          ],
+          "rows": [
+            [
+              "student",
+              875,
+              275,
+              31.4286
+            ],
+            [
+              "retired",
+              1720,
+              434,
+              25.2326
+            ],
+            [
+              "unemployed",
+              1014,
+              144,
+              14.2012
+            ],
+            [
+              "admin.",
+              10422,
+              1352,
+              12.9726
+            ],
+            [
+              "management",
+              2924,
+              328,
+              11.2175
+            ],
+            [
+              "unknown",
+              330,
+              37,
+              11.2121
+            ],
+            [
+              "technician",
+              6743,
+              730,
+              10.826
+            ],
+            [
+              "self-employed",
+              1421,
+              149,
+              10.4856
+            ],
+            [
+              "housemaid",
+              1060,
+              106,
+              10.0
+            ],
+            [
+              "entrepreneur",
+              1456,
+              124,
+              8.5165
+            ],
+            [
+              "services",
+              3969,
+              323,
+              8.1381
+            ],
+            [
+              "blue-collar",
+              9254,
+              638,
+              6.8943
+            ]
+          ],
+          "truncated": false,
+          "elapsed_ms": 31.0
+        },
+        "summary": "已返回结果中最高的分组为 job=student：转化率 31.43%，样本量 875。这是描述统计，建议进一步检验客群差异。",
+        "warnings": [
+          "转化率描述相关性，不能证明渠道或营销次数造成转化变化。",
+          "月份跨年份合并，不能解释为连续月度趋势；没有收入、成本或客户唯一标识。",
+          "duration 是通话结束后才知道的变量，不能用于联系前的预测或客群选择。"
+        ],
+        "elapsed_ms": 31.0
+      }
+    },
+    {
+      "id": "education",
+      "question": "不同教育程度的转化率是多少？",
+      "passed": true,
+      "expected_status": "ok",
+      "result": {
+        "question": "不同教育程度的转化率是多少？",
+        "mode": "demo",
+        "trace": [
+          {
+            "step": "inspect_schema",
+            "table": "bank_contacts",
+            "columns": 23
+          },
+          {
+            "step": "plan",
+            "attempt": 1,
+            "status": "query"
+          },
+          {
+            "step": "execute",
+            "attempt": 1,
+            "rows": 8
+          }
+        ],
+        "status": "ok",
+        "explanation": "按源数据观察记录计算；不是独立客户口径。",
+        "sql": "SELECT education, COUNT(*) AS observations, SUM(subscribed) AS subscriptions, ROUND(100.0 * AVG(subscribed), 4) AS conversion_pct FROM bank_contacts GROUP BY education ORDER BY conversion_pct DESC",
+        "table": {
+          "columns": [
+            "education",
+            "observations",
+            "subscriptions",
+            "conversion_pct"
+          ],
+          "rows": [
+            [
+              "illiterate",
+              18,
+              4,
+              22.2222
+            ],
+            [
+              "unknown",
+              1731,
+              251,
+              14.5003
+            ],
+            [
+              "university.degree",
+              12168,
+              1670,
+              13.7245
+            ],
+            [
+              "professional.course",
+              5243,
+              595,
+              11.3485
+            ],
+            [
+              "high.school",
+              9515,
+              1031,
+              10.8355
+            ],
+            [
+              "basic.4y",
+              4176,
+              428,
+              10.249
+            ],
+            [
+              "basic.6y",
+              2292,
+              188,
+              8.2024
+            ],
+            [
+              "basic.9y",
+              6045,
+              473,
+              7.8246
+            ]
+          ],
+          "truncated": false,
+          "elapsed_ms": 16.0
+        },
+        "summary": "已返回结果中最高的分组为 education=illiterate：转化率 22.22%，样本量 18。这是描述统计，建议进一步检验客群差异。",
+        "warnings": [
+          "转化率描述相关性，不能证明渠道或营销次数造成转化变化。",
+          "月份跨年份合并，不能解释为连续月度趋势；没有收入、成本或客户唯一标识。",
+          "duration 是通话结束后才知道的变量，不能用于联系前的预测或客群选择。"
+        ],
+        "elapsed_ms": 16.0
+      }
+    },
+    {
+      "id": "month",
+      "question": "按月份汇总转化率（跨年合并）",
+      "passed": true,
+      "expected_status": "ok",
+      "result": {
+        "question": "按月份汇总转化率（跨年合并）",
+        "mode": "demo",
+        "trace": [
+          {
+            "step": "inspect_schema",
+            "table": "bank_contacts",
+            "columns": 23
+          },
+          {
+            "step": "plan",
+            "attempt": 1,
+            "status": "query"
+          },
+          {
+            "step": "execute",
+            "attempt": 1,
+            "rows": 10
+          }
+        ],
+        "status": "ok",
+        "explanation": "按源数据观察记录计算；不是独立客户口径。",
+        "sql": "SELECT month, COUNT(*) AS observations, SUM(subscribed) AS subscriptions, ROUND(100.0 * AVG(subscribed), 4) AS conversion_pct FROM bank_contacts GROUP BY month ORDER BY CASE month WHEN 'jan' THEN 1 WHEN 'feb' THEN 2 WHEN 'mar' THEN 3 WHEN 'apr' THEN 4 WHEN 'may' THEN 5 WHEN 'jun' THEN 6 WHEN 'jul' THEN 7 WHEN 'aug' THEN 8 WHEN 'sep' THEN 9 WHEN 'oct' THEN 10 WHEN 'nov' THEN 11 ELSE 12 END",
+        "table": {
+          "columns": [
+            "month",
+            "observations",
+            "subscriptions",
+            "conversion_pct"
+          ],
+          "rows": [
+            [
+              "mar",
+              546,
+              276,
+              50.5495
+            ],
+            [
+              "apr",
+              2632,
+              539,
+              20.4787
+            ],
+            [
+              "may",
+              13769,
+              886,
+              6.4347
+            ],
+            [
+              "jun",
+              5318,
+              559,
+              10.5115
+            ],
+            [
+              "jul",
+              7174,
+              649,
+              9.0466
+            ],
+            [
+              "aug",
+              6178,
+              655,
+              10.6021
+            ],
+            [
+              "sep",
+              570,
+              256,
+              44.9123
+            ],
+            [
+              "oct",
+              718,
+              315,
+              43.8719
+            ],
+            [
+              "nov",
+              4101,
+              416,
+              10.1439
+            ],
+            [
+              "dec",
+              182,
+              89,
+              48.9011
+            ]
+          ],
+          "truncated": false,
+          "elapsed_ms": 0.0
+        },
+        "summary": "已返回结果中最高的分组为 month=mar：转化率 50.55%，样本量 546。这是描述统计，建议进一步检验客群差异。",
+        "warnings": [
+          "转化率描述相关性，不能证明渠道或营销次数造成转化变化。",
+          "月份跨年份合并，不能解释为连续月度趋势；没有收入、成本或客户唯一标识。",
+          "duration 是通话结束后才知道的变量，不能用于联系前的预测或客群选择。"
+        ],
+        "elapsed_ms": 0.0
+      }
+    },
+    {
+      "id": "history",
+      "question": "上次营销结果与本次转化有什么关系？",
+      "passed": true,
+      "expected_status": "ok",
+      "result": {
+        "question": "上次营销结果与本次转化有什么关系？",
+        "mode": "demo",
+        "trace": [
+          {
+            "step": "inspect_schema",
+            "table": "bank_contacts",
+            "columns": 23
+          },
+          {
+            "step": "plan",
+            "attempt": 1,
+            "status": "query"
+          },
+          {
+            "step": "execute",
+            "attempt": 1,
+            "rows": 3
+          }
+        ],
+        "status": "ok",
+        "explanation": "按源数据观察记录计算；不是独立客户口径。",
+        "sql": "SELECT poutcome, COUNT(*) AS observations, SUM(subscribed) AS subscriptions, ROUND(100.0 * AVG(subscribed), 4) AS conversion_pct FROM bank_contacts GROUP BY poutcome ORDER BY conversion_pct DESC",
+        "table": {
+          "columns": [
+            "poutcome",
+            "observations",
+            "subscriptions",
+            "conversion_pct"
+          ],
+          "rows": [
+            [
+              "success",
+              1373,
+              894,
+              65.1129
+            ],
+            [
+              "failure",
+              4252,
+              605,
+              14.2286
+            ],
+            [
+              "nonexistent",
+              35563,
+              3141,
+              8.8322
+            ]
+          ],
+          "truncated": false,
+          "elapsed_ms": 0.0
+        },
+        "summary": "已返回结果中最高的分组为 poutcome=success：转化率 65.11%，样本量 1,373。这是描述统计，建议进一步检验客群差异。",
+        "warnings": [
+          "转化率描述相关性，不能证明渠道或营销次数造成转化变化。",
+          "月份跨年份合并，不能解释为连续月度趋势；没有收入、成本或客户唯一标识。",
+          "duration 是通话结束后才知道的变量，不能用于联系前的预测或客群选择。"
+        ],
+        "elapsed_ms": 16.0
+      }
+    },
+    {
+      "id": "loan",
+      "question": "个人贷款状态与转化率有什么关系？",
+      "passed": true,
+      "expected_status": "ok",
+      "result": {
+        "question": "个人贷款状态与转化率有什么关系？",
+        "mode": "demo",
+        "trace": [
+          {
+            "step": "inspect_schema",
+            "table": "bank_contacts",
+            "columns": 23
+          },
+          {
+            "step": "plan",
+            "attempt": 1,
+            "status": "query"
+          },
+          {
+            "step": "execute",
+            "attempt": 1,
+            "rows": 3
+          }
+        ],
+        "status": "ok",
+        "explanation": "按源数据观察记录计算；不是独立客户口径。",
+        "sql": "SELECT loan, COUNT(*) AS observations, SUM(subscribed) AS subscriptions, ROUND(100.0 * AVG(subscribed), 4) AS conversion_pct FROM bank_contacts GROUP BY loan ORDER BY conversion_pct DESC",
+        "table": {
+          "columns": [
+            "loan",
+            "observations",
+            "subscriptions",
+            "conversion_pct"
+          ],
+          "rows": [
+            [
+              "no",
+              33950,
+              3850,
+              11.3402
+            ],
+            [
+              "yes",
+              6248,
+              683,
+              10.9315
+            ],
+            [
+              "unknown",
+              990,
+              107,
+              10.8081
+            ]
+          ],
+          "truncated": false,
+          "elapsed_ms": 15.0
+        },
+        "summary": "已返回结果中最高的分组为 loan=no：转化率 11.34%，样本量 33,950。这是描述统计，建议进一步检验客群差异。",
+        "warnings": [
+          "转化率描述相关性，不能证明渠道或营销次数造成转化变化。",
+          "月份跨年份合并，不能解释为连续月度趋势；没有收入、成本或客户唯一标识。",
+          "duration 是通话结束后才知道的变量，不能用于联系前的预测或客群选择。"
+        ],
+        "elapsed_ms": 15.0
+      }
+    },
+    {
+      "id": "frequency",
+      "question": "联系次数与转化率有什么关系？",
+      "passed": true,
+      "expected_status": "ok",
+      "result": {
+        "question": "联系次数与转化率有什么关系？",
+        "mode": "demo",
+        "trace": [
+          {
+            "step": "inspect_schema",
+            "table": "bank_contacts",
+            "columns": 23
+          },
+          {
+            "step": "plan",
+            "attempt": 1,
+            "status": "query"
+          },
+          {
+            "step": "execute",
+            "attempt": 1,
+            "rows": 4
+          }
+        ],
+        "status": "ok",
+        "explanation": "按源数据观察记录计算；不是独立客户口径。",
+        "sql": "SELECT CASE WHEN campaign=1 THEN '1' WHEN campaign BETWEEN 2 AND 3 THEN '2-3' WHEN campaign BETWEEN 4 AND 5 THEN '4-5' ELSE '6+' END AS contact_bucket, COUNT(*) AS observations, SUM(subscribed) AS subscriptions, ROUND(100.0 * AVG(subscribed), 4) AS conversion_pct FROM bank_contacts GROUP BY contact_bucket ORDER BY contact_bucket",
+        "table": {
+          "columns": [
+            "contact_bucket",
+            "observations",
+            "subscriptions",
+            "conversion_pct"
+          ],
+          "rows": [
+            [
+              "1",
+              17642,
+              2300,
+              13.0371
+            ],
+            [
+              "2-3",
+              15911,
+              1785,
+              11.2187
+            ],
+            [
+              "4-5",
+              4250,
+              369,
+              8.6824
+            ],
+            [
+              "6+",
+              3385,
+              186,
+              5.4948
+            ]
+          ],
+          "truncated": false,
+          "elapsed_ms": 16.0
+        },
+        "summary": "已返回结果中最高的分组为 contact_bucket=1：转化率 13.04%，样本量 17,642。这是描述统计，建议进一步检验客群差异。",
+        "warnings": [
+          "转化率描述相关性，不能证明渠道或营销次数造成转化变化。",
+          "月份跨年份合并，不能解释为连续月度趋势；没有收入、成本或客户唯一标识。",
+          "duration 是通话结束后才知道的变量，不能用于联系前的预测或客群选择。"
+        ],
+        "elapsed_ms": 16.0
+      }
+    },
+    {
+      "id": "age",
+      "question": "各年龄段的转化率是多少？",
+      "passed": true,
+      "expected_status": "ok",
+      "result": {
+        "question": "各年龄段的转化率是多少？",
+        "mode": "demo",
+        "trace": [
+          {
+            "step": "inspect_schema",
+            "table": "bank_contacts",
+            "columns": 23
+          },
+          {
+            "step": "plan",
+            "attempt": 1,
+            "status": "query"
+          },
+          {
+            "step": "execute",
+            "attempt": 1,
+            "rows": 4
+          }
+        ],
+        "status": "ok",
+        "explanation": "按源数据观察记录计算；不是独立客户口径。",
+        "sql": "SELECT CASE WHEN age<30 THEN '<30' WHEN age<45 THEN '30-44' WHEN age<60 THEN '45-59' ELSE '60+' END AS age_band, COUNT(*) AS observations, SUM(subscribed) AS subscriptions, ROUND(100.0 * AVG(subscribed), 4) AS conversion_pct FROM bank_contacts GROUP BY age_band ORDER BY age_band",
+        "table": {
+          "columns": [
+            "age_band",
+            "observations",
+            "subscriptions",
+            "conversion_pct"
+          ],
+          "rows": [
+            [
+              "30-44",
+              22585,
+              2168,
+              9.5993
+            ],
+            [
+              "45-59",
+              11741,
+              1078,
+              9.1815
+            ],
+            [
+              "60+",
+              1193,
+              472,
+              39.5641
+            ],
+            [
+              "<30",
+              5669,
+              922,
+              16.2639
+            ]
+          ],
+          "truncated": false,
+          "elapsed_ms": 16.0
+        },
+        "summary": "已返回结果中最高的分组为 age_band=60+：转化率 39.56%，样本量 1,193。这是描述统计，建议进一步检验客群差异。",
+        "warnings": [
+          "转化率描述相关性，不能证明渠道或营销次数造成转化变化。",
+          "月份跨年份合并，不能解释为连续月度趋势；没有收入、成本或客户唯一标识。",
+          "duration 是通话结束后才知道的变量，不能用于联系前的预测或客群选择。"
+        ],
+        "elapsed_ms": 16.0
+      }
+    },
+    {
+      "id": "rank",
+      "question": "每个渠道内转化率最高的三个职业是什么？",
+      "passed": true,
+      "expected_status": "ok",
+      "result": {
+        "question": "每个渠道内转化率最高的三个职业是什么？",
+        "mode": "demo",
+        "trace": [
+          {
+            "step": "inspect_schema",
+            "table": "bank_contacts",
+            "columns": 23
+          },
+          {
+            "step": "plan",
+            "attempt": 1,
+            "status": "query"
+          },
+          {
+            "step": "execute",
+            "attempt": 1,
+            "rows": 6
+          }
+        ],
+        "status": "ok",
+        "explanation": "按源数据观察记录计算；不是独立客户口径。",
+        "sql": "WITH segments AS (SELECT contact, job, COUNT(*) AS observations, ROUND(100.0 * AVG(subscribed), 4) AS conversion_pct FROM bank_contacts GROUP BY contact, job HAVING COUNT(*)>=100), ranked AS (SELECT *, ROW_NUMBER() OVER (PARTITION BY contact ORDER BY conversion_pct DESC, job) AS position FROM segments) SELECT * FROM ranked WHERE position<=3 ORDER BY contact, position",
+        "table": {
+          "columns": [
+            "contact",
+            "job",
+            "observations",
+            "conversion_pct",
+            "position"
+          ],
+          "rows": [
+            [
+              "cellular",
+              "student",
+              671,
+              36.3636,
+              1
+            ],
+            [
+              "cellular",
+              "retired",
+              1231,
+              31.6003,
+              2
+            ],
+            [
+              "cellular",
+              "unemployed",
+              620,
+              19.8387,
+              3
+            ],
+            [
+              "telephone",
+              "student",
+              204,
+              15.1961,
+              1
+            ],
+            [
+              "telephone",
+              "retired",
+              489,
+              9.2025,
+              2
+            ],
+            [
+              "telephone",
+              "unknown",
+              162,
+              6.7901,
+              3
+            ]
+          ],
+          "truncated": false,
+          "elapsed_ms": 31.0
+        },
+        "summary": "已返回结果中最高的分组为 contact=cellular / job=student：转化率 36.36%，样本量 671。这是描述统计，建议进一步检验客群差异。",
+        "warnings": [
+          "转化率描述相关性，不能证明渠道或营销次数造成转化变化。",
+          "月份跨年份合并，不能解释为连续月度趋势；没有收入、成本或客户唯一标识。",
+          "duration 是通话结束后才知道的变量，不能用于联系前的预测或客群选择。"
+        ],
+        "elapsed_ms": 31.0
+      }
+    },
+    {
+      "id": "quality",
+      "question": "关键字段有多少 unknown？",
+      "passed": true,
+      "expected_status": "ok",
+      "result": {
+        "question": "关键字段有多少 unknown？",
+        "mode": "demo",
+        "trace": [
+          {
+            "step": "inspect_schema",
+            "table": "bank_contacts",
+            "columns": 23
+          },
+          {
+            "step": "plan",
+            "attempt": 1,
+            "status": "query"
+          },
+          {
+            "step": "execute",
+            "attempt": 1,
+            "rows": 1
+          }
+        ],
+        "status": "ok",
+        "explanation": "按源数据观察记录计算；不是独立客户口径。",
+        "sql": "SELECT SUM(CASE WHEN job='unknown' THEN 1 ELSE 0 END) AS job_unknown, SUM(CASE WHEN education='unknown' THEN 1 ELSE 0 END) AS education_unknown, SUM(CASE WHEN loan='unknown' THEN 1 ELSE 0 END) AS loan_unknown FROM bank_contacts",
+        "table": {
+          "columns": [
+            "job_unknown",
+            "education_unknown",
+            "loan_unknown"
+          ],
+          "rows": [
+            [
+              330,
+              1731,
+              990
+            ]
+          ],
+          "truncated": false,
+          "elapsed_ms": 0.0
+        },
+        "summary": "查询返回 1 行。数值和口径见下方结果表，结论应结合样本量解读。",
+        "warnings": [
+          "转化率描述相关性，不能证明渠道或营销次数造成转化变化。",
+          "月份跨年份合并，不能解释为连续月度趋势；没有收入、成本或客户唯一标识。",
+          "duration 是通话结束后才知道的变量，不能用于联系前的预测或客群选择。"
+        ],
+        "elapsed_ms": 0.0
+      }
+    },
+    {
+      "id": "revenue",
+      "question": "收入为什么下降？",
+      "passed": true,
+      "expected_status": "refuse",
+      "result": {
+        "question": "收入为什么下降？",
+        "mode": "demo",
+        "trace": [
+          {
+            "step": "inspect_schema",
+            "table": "bank_contacts",
+            "columns": 23
+          },
+          {
+            "step": "plan",
+            "attempt": 1,
+            "status": "refuse"
+          }
+        ],
+        "status": "refuse",
+        "explanation": "数据没有收入、金额或成本字段，不能计算收入或 ROI。",
+        "elapsed_ms": 0.0
+      }
+    },
+    {
+      "id": "customers",
+      "question": "有多少独立客户？",
+      "passed": true,
+      "expected_status": "refuse",
+      "result": {
+        "question": "有多少独立客户？",
+        "mode": "demo",
+        "trace": [
+          {
+            "step": "inspect_schema",
+            "table": "bank_contacts",
+            "columns": 23
+          },
+          {
+            "step": "plan",
+            "attempt": 1,
+            "status": "refuse"
+          }
+        ],
+        "status": "refuse",
+        "explanation": "数据没有稳定的客户 ID；observation_id 只是导入行号，不能去重客户。",
+        "elapsed_ms": 0.0
+      }
+    },
+    {
+      "id": "causal",
+      "question": "电话联系导致转化率降低吗？",
+      "passed": true,
+      "expected_status": "refuse",
+      "result": {
+        "question": "电话联系导致转化率降低吗？",
+        "mode": "demo",
+        "trace": [
+          {
+            "step": "inspect_schema",
+            "table": "bank_contacts",
+            "columns": 23
+          },
+          {
+            "step": "plan",
+            "attempt": 1,
+            "status": "refuse"
+          }
+        ],
+        "status": "refuse",
+        "explanation": "这是观察数据，不能确定因果。可比较渠道转化，但需考虑客群选择偏差。",
+        "elapsed_ms": 0.0
+      }
+    },
+    {
+      "id": "trend",
+      "question": "2010年3月的环比转化率？",
+      "passed": true,
+      "expected_status": "refuse",
+      "result": {
+        "question": "2010年3月的环比转化率？",
+        "mode": "demo",
+        "trace": [
+          {
+            "step": "inspect_schema",
+            "table": "bank_contacts",
+            "columns": 23
+          },
+          {
+            "step": "plan",
+            "attempt": 1,
+            "status": "refuse"
+          }
+        ],
+        "status": "refuse",
+        "explanation": "源数据没有逐行年份和完整日期，不能计算可靠的年月环比。",
+        "elapsed_ms": 0.0
+      }
+    }
+  ]
+}

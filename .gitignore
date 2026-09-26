@@ -1,0 +1,11 @@
+.venv/
+__pycache__/
+.pytest_cache/
+.env
+.streamlit/secrets.toml
+data/*.db
+# Bundle the public UCI archive so cold starts do not depend on UCI networking.
+data/*.csv
+data/manifest.json
+reports/live-*.json
+data/*.db-*
