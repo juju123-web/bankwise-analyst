@@ -5,6 +5,7 @@ import time
 from .catalog import CATALOG
 from .data import DB
 from .sql import execute, schema, QueryError
+from .i18n import tr, question_text
 
 RULES = '''You are Bankwise, a banking marketing analyst. Answer Chinese questions.
 Return ONLY JSON: {"status":"query|refuse|clarify","sql":"...","explanation":"..."}.
@@ -24,9 +25,10 @@ Explain metric assumptions in Chinese; do not invent findings before executing.
 '''
 
 class OpenAIPlanner:
-    def __init__(self, key=None, model=None):
+    def __init__(self, key=None, model=None, language='zh'):
         from openai import OpenAI
         self.model = model or os.getenv('OPENAI_MODEL', '')
+        self.language = language
         key = key or os.getenv('OPENAI_API_KEY', '')
         if not key or not self.model:
             raise ValueError('请在侧栏或环境变量中设置 API Key 和可用的模型 ID。')
@@ -37,18 +39,21 @@ class OpenAIPlanner:
         message = {'question': question, 'schema': {'bank_contacts': columns}}
         if error:
             message['previous_attempt_error'] = error
-        response = self.client.responses.create(model=self.model, instructions=RULES,
+        rules = RULES.replace('Answer Chinese questions.', 'Answer questions in English or Chinese.')
+        rules = rules.replace('Explain metric assumptions in Chinese;', 'Explain metric assumptions in the selected language;')
+        rules += '\nWrite every explanation in ' + ('English.' if self.language == 'en' else 'Chinese.')
+        response = self.client.responses.create(model=self.model, instructions=rules,
                     input=json.dumps(message, ensure_ascii=False), max_output_tokens=1600, store=False)
         if response.usage:
             self.usage.append(response.usage.model_dump())
         return json.loads(response.output_text)
 
-def analyze(question, planner=None, demo_id=None, db=DB):
+def analyze(question, planner=None, demo_id=None, db=DB, language='zh'):
     start = time.monotonic()
     trace = []
-    result = {'question': question, 'mode': 'live' if planner else 'demo', 'trace': trace}
+    result = {'question': question, 'mode': 'live' if planner else 'demo', 'trace': trace, 'language': language}
     def finish(status, explanation, **kwargs):
-        result.update(status=status, explanation=explanation, **kwargs)
+        result.update(status=status, explanation=tr(explanation, language), **kwargs)
         result['elapsed_ms'] = round((time.monotonic()-start)*1000, 2)
         if planner and hasattr(planner, 'usage'):
             result['usage'] = planner.usage
@@ -64,7 +69,7 @@ def analyze(question, planner=None, demo_id=None, db=DB):
                 plan = planner(question, columns, error)
             else:
                 item = CATALOG.get(demo_id)
-                if item is None or item['question'] != question:
+                if item is None or question_text(demo_id, language) != question:
                     return finish('clarify', '演示模式只支持下拉菜单中的预设问题；自由提问需要启用模型。')
                 plan = {'status': 'refuse', 'explanation': item['reason']} if 'reason' in item else {
                     'status': 'query', 'sql': item['sql'], 'explanation': '按源数据观察记录计算；不是独立客户口径。'}
@@ -77,7 +82,7 @@ def analyze(question, planner=None, demo_id=None, db=DB):
             table = execute(sql, db=db)
             trace.append({'step': 'execute', 'attempt': attempt+1, 'rows': len(table['rows'])})
             return finish('ok', str(plan.get('explanation', '')), sql=sql, table=table,
-                          summary=summarize(table), warnings=WARNINGS)
+                          summary=summarize(table, language), warnings=[tr(w, language) for w in WARNINGS])
         except (QueryError, ValueError, TypeError) as exc:
             error = {'message': str(exc), 'sql': plan.get('sql', '') if isinstance(locals().get('plan'), dict) else ''}
             trace.append({'step': 'repair_needed', 'attempt': attempt+1, 'error': str(exc)})
@@ -116,9 +121,11 @@ WARNINGS = [
     'duration 是通话结束后才知道的变量，不能用于联系前的预测或客群选择。',
 ]
 
-def summarize(table):
+def summarize(table, language='zh'):
     rows, cols = table['rows'], table['columns']
     if not rows:
+        if language == 'en':
+            return 'The query returned no matching observations. This does not imply a zero conversion rate.'
         return '查询成功，但没有匹配记录；不能据此推断转化率为零。'
     if 'conversion_pct' in cols:
         index = cols.index('conversion_pct')
@@ -128,5 +135,10 @@ def summarize(table):
             label = ' / '.join(f'{col}={best[i]}' for i, col in enumerate(cols)
                                if col not in {'conversion_pct', 'observations', 'subscriptions', 'position'})
             count = f"，样本量 {best[cols.index('observations')]:,}" if 'observations' in cols else ''
+            if language == 'en':
+                count = f", {best[cols.index('observations')]:,} observations" if 'observations' in cols else ''
+                return f"{'Highest group among returned rows: '+label if label else 'Overall'}: {best[index]:.2f}% conversion{count}. These are descriptive statistics, not causal findings."
             return f"{'已返回结果中最高的分组为 '+label if label else '总体'}：转化率 {best[index]:.2f}%{count}。这是描述统计，建议进一步检验客群差异。"
+    if language == 'en':
+        return f'The query returned {len(rows)} rows. Inspect the table and interpret findings in light of sample sizes.'
     return f'查询返回 {len(rows)} 行。数值和口径见下方结果表，结论应结合样本量解读。'

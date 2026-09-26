@@ -2,6 +2,8 @@
 
 用真实银行营销数据，把中文业务问题转成可审查的 SQL、图表和描述统计。为 **SQL + Python + Data Agent** 求职作品设计。
 
+支持中文 / English：在侧栏 **Language / 语言** 切换。界面、15 个预设问题、摘要、错误提示、数据卡和学习指南随语言切换；新模型查询也会要求使用所选语言回答。SQL 标识符和原始数据值保持不变。语言切换本身不产生 API 调用。
+
 项目提供两个明确区分的模式：
 
 在线 Demo：[bankwise-juju123.streamlit.app](https://bankwise-juju123.streamlit.app/)。源码仓库：[juju123-web/bankwise-analyst](https://github.com/juju123-web/bankwise-analyst)。已验证线上预设分析及两个真实模型案例：渠道统计、收入/ROI 拒答。详见 [线上验证记录](reports/LIVE_SMOKE_TEST.md)。完整模型基准尚未执行。

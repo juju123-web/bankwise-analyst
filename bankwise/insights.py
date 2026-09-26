@@ -10,7 +10,7 @@ def wilson(successes, total, z=1.96):
     half = z*sqrt(p*(1-p)/total+z*z/(4*total*total))/denominator
     return max(0.0,100*(center-half)), min(100.0,100*(center+half))
 
-def uncertainty(table):
+def uncertainty(table, language='zh'):
     cols = table['columns']
     if 'observations' not in cols or 'subscriptions' not in cols:
         return []
@@ -23,4 +23,7 @@ def uncertainty(table):
         label = ' / '.join(str(row[i]) for i,col in enumerate(cols) if col not in {'observations','subscriptions','conversion_pct','position'}) or 'overall'
         output.append({'分组':label, '观察记录数':n, '转化率下界 (%)':round(low,2),
                        '转化率上界 (%)':round(high,2), '样本提示':'小样本，谨慎解读' if n<100 else '≥100'})
+    if language == 'en':
+        from .i18n import tr
+        return [{tr(k, language): tr(v, language) if isinstance(v, str) else v for k,v in row.items()} for row in output]
     return output
