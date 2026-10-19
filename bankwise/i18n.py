@@ -32,6 +32,13 @@ TEXT = {'Bankwise · 银行营销分析': 'Bankwise · Banking Analytics',
  '预设 SQL 演示 · 未调用模型': 'Preset SQL demo · No model call',
  '分析结果': 'Analysis results',
  '分组': 'Group',
+ '转化率 (%)': 'Conversion rate (%)',
+ '订阅数': 'Subscriptions',
+ '95% Wilson 下界 (%)': '95% Wilson lower bound (%)',
+ '95% Wilson 上界 (%)': '95% Wilson upper bound (%)',
+ '总体转化率 (%)': 'Overall conversion rate (%)',
+ '总体': 'Overall',
+ '分组转化率与 95% Wilson 区间': 'Conversion rate by group with 95% Wilson intervals',
  '样本量与转化率区间': 'Sample sizes and conversion intervals',
  '95% Wilson 描述性区间，假设观察相互独立；无法识别同一客户重复出现，未调整混杂因素或多重比较。不是因果置信区间。': '95% descriptive Wilson '
                                                                   'intervals assume independent '

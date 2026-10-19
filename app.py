@@ -7,7 +7,8 @@ from bankwise.agent import analyze, OpenAIPlanner, WARNINGS
 from bankwise.catalog import CATALOG
 from bankwise.data import DB, ROOT, prepare
 from bankwise.sql import execute, schema, QueryError
-from bankwise.insights import uncertainty
+from bankwise.insights import uncertainty, uncertainty_rows
+from bankwise.charts import grouped_conversion_chart
 from bankwise.access import authorize_server_key, reserve_question
 from bankwise.i18n import tr, question_text
 language = st.sidebar.selectbox('Language / 语言', ['zh', 'en'], format_func=lambda value: 'English' if value == 'en' else '中文', key='language')
@@ -73,14 +74,14 @@ def display(result, prefix):
         st.caption(result['explanation'])
         table = result['table']
         frame = pd.DataFrame(table['rows'], columns=table['columns'])
-        if 'conversion_pct' in frame.columns and len(frame) > 1:
-            dims = [col for col in frame.columns if col not in {'observations', 'subscriptions', 'conversion_pct', 'position'}]
-            if dims:
-                chart = frame.copy()
-                chart[t('分组')] = chart[dims].astype(str).agg(' / '.join, axis=1)
-                st.bar_chart(chart, x=t('分组'), y='conversion_pct', color='#176b69')
+        interval_rows = uncertainty_rows(table)
+        chart = grouped_conversion_chart(
+            table, language=language, overall_rate=overall[2], interval_rows=interval_rows
+        )
+        if chart is not None:
+            st.altair_chart(chart, width='stretch')
         st.dataframe(frame, hide_index=True, width='stretch')
-        intervals = uncertainty(table, language=language)
+        intervals = uncertainty(table, language=language, rows=interval_rows)
         if intervals:
             with st.expander(t('样本量与转化率区间')):
                 st.dataframe(pd.DataFrame(intervals), hide_index=True, width='stretch')
