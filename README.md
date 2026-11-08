@@ -87,3 +87,26 @@ Live 评测是 15 个固定问题的严格结果比对；为了可自动核对�
 从 [中文 Study Guide](docs/STUDY_GUIDE.md) 开始；准备展示参考 [面试与演示指南](docs/INTERVIEW.md)，部署参考 [DEPLOYMENT](docs/DEPLOYMENT.md)。建议理解后再将能力写进简历。
 
 代码采用 MIT 许可。原始数据单独遵循 CC BY 4.0，转载需保留来源及作者署名。
+
+## 自定义银行数据 / Custom banking datasets
+
+在侧栏选择 **自定义银行数据 / Custom**，上传 UTF-8 CSV 或直接粘贴含表头的 CSV。
+支持不同字段名（含中文）、逗号/分号/制表符/竖线分隔；限制为 10 MB、100,000 行和 100 个字段。
+导入后在“数据与口径”查看预览和字段类型，并填写每行含义、字段单位、日期格式及业务指标定义。
+然后使用模型自由提问，或免费使用 SQL 工作台。内部表名始终为 `bank_contacts`，原始字段名保留，
+特殊字段名使用双引号引用。当前版本一次分析一个文件，不做跨文件关联，也不验证文件是否属于银行业务。
+
+空单元格转为 NULL；`unknown`、`NA` 等文本保留；带前导零的编号和日期保持文本。
+无歧义的数字列自动转为数值；带货币符号或千位分隔符的金额请先整理，不能仅凭列名推断币种。
+预设营销问题、UCI 专属转化率图表和解释仅在演示数据中使用。自定义数据展示实际行数和字段数，
+缺少业务定义时模型应请求澄清；不会自动套用 UCI 的客户、年份、转化率或收入限制。
+
+每个会话使用独立的临时数据库，不覆盖演示库；替换上传文件时删除旧临时数据库并清除旧分析结果。
+临时文件可能在服务器会话回收或进程退出时清理；本功能不提供持久化数据集目录。
+模型接收问题、字段结构、用户填写的数据说明和必要的查询修复信息，不直接发送原始数据行。
+数据说明中请勿填入敏感原始记录。保留现有只读 SQL、资源限制和访问口令保护。
+
+Choose **Custom** in the sidebar to upload or paste a UTF-8 banking CSV with arbitrary columns.
+Add dataset notes describing row grain, column meanings, units and metric definitions, inspect the preview,
+then ask the model or use the SQL workbench. One dataset is active at a time; joins across files and Excel
+imports are not included. Custom datasets use isolated temporary databases and retain the existing SQL protections.
