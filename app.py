@@ -5,7 +5,9 @@ import hashlib
 from bankwise.uploads import create_dataset
 import pandas as pd
 import streamlit as st
-from bankwise.agent import analyze, OpenAIPlanner, WARNINGS
+from bankwise.runtime import load_agent
+agent = load_agent()
+analyze, OpenAIPlanner = agent.analyze, agent.OpenAIPlanner
 from bankwise.catalog import CATALOG
 from bankwise.data import DB, ROOT, prepare
 from bankwise.sql import execute, schema, QueryError
