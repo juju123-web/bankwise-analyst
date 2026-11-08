@@ -136,6 +136,10 @@ def provider_error(exc):
         if isinstance(value, str) and value in messages:
             diagnostic['code'] = value
             return diagnostic, messages[value]
+    if status == 401:
+        return diagnostic, '模型服务拒绝了 API Key（HTTP 401）。如使用模型访问口令，请由项目所有者在 Streamlit Secrets 中更新 OPENAI_API_KEY；访问口令正确不代表服务端 API Key 有效。'
+    if status == 403:
+        return diagnostic, '模型服务拒绝访问（HTTP 403）。请检查 API Key 所属项目、模型访问权限及服务可用地区。'
     return diagnostic, '模型请求失败，请检查密钥、模型权限、额度或网络；没有自动切换成演示答案。'
 
 WARNINGS = [

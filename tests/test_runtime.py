@@ -19,7 +19,16 @@ def test_refresh_stale_planner_after_deployment(monkeypatch):
 
 def test_current_agent_does_not_reload(monkeypatch):
     import bankwise.runtime as runtime
+    runtime.load_agent()
     def unexpected_reload(module):
         raise AssertionError('Current modules should not reload on every rerun')
     monkeypatch.setattr(runtime.importlib, 'reload', unexpected_reload)
     assert runtime.load_agent() is agent
+
+
+def test_refresh_when_source_digest_changes(monkeypatch):
+    load_agent()
+    monkeypatch.setattr(agent, '_loaded_source_digest', 'previous-release')
+    refreshed = load_agent()
+    assert refreshed._loaded_source_digest != 'previous-release'
+    assert 'dataset_notes' in inspect.signature(refreshed.OpenAIPlanner).parameters

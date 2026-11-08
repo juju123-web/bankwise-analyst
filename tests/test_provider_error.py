@@ -13,3 +13,12 @@ def test_unknown_code_is_not_echoed():
     error = RuntimeError('secret')
     error.code = 'secret'
     assert 'secret' not in str(provider_error(error))
+
+
+def test_http_401_has_actionable_message_without_body():
+    class AuthenticationFailure(Exception):
+        status_code = 401
+    diagnostic, message = provider_error(AuthenticationFailure('secret-key-do-not-print'))
+    assert diagnostic['http_status'] == 401
+    assert 'HTTP 401' in message and 'OPENAI_API_KEY' in message
+    assert 'secret-key-do-not-print' not in str((diagnostic, message))

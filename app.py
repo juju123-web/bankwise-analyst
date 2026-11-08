@@ -5,8 +5,11 @@ import hashlib
 from bankwise.uploads import create_dataset
 import pandas as pd
 import streamlit as st
-from bankwise.runtime import load_agent
-agent = load_agent()
+import importlib
+from bankwise import runtime
+# Refresh the loader too when an existing process receives new source files.
+importlib.reload(runtime)
+agent = runtime.load_agent()
 analyze, OpenAIPlanner = agent.analyze, agent.OpenAIPlanner
 from bankwise.catalog import CATALOG
 from bankwise.data import DB, ROOT, prepare
